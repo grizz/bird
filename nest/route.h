@@ -450,6 +450,8 @@ typedef struct eattr {
 #define EAF_TYPE_AS_PATH 0x06		/* BGP AS path (encoding per RFC 1771:4.3) */
 #define EAF_TYPE_BITFIELD 0x09		/* 32-bit embedded bitfield */
 #define EAF_TYPE_INT_SET 0x0a		/* Set of u32's (e.g., a community list) */
+/* this unsets EAF_VAR_LENGTH, but there's no more room left and it doesn't seem to be used */
+#define EAF_TYPE_LC_SET 0x0c		/* Set of 3 u32's (large community list) */
 #define EAF_TYPE_EC_SET 0x0e		/* Set of pairs of u32's - ext. community list */
 #define EAF_TYPE_UNDEF 0x0f		/* `force undefined' entry */
 #define EAF_EMBEDDED 0x01		/* Data stored in eattr.u.data (part of type spec) */

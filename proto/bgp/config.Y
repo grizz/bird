@@ -160,7 +160,7 @@ CF_ADDTO(dynamic_attr, BGP_CLUSTER_LIST
 CF_ADDTO(dynamic_attr, BGP_EXT_COMMUNITY
 	{ $$ = f_new_dynamic_attr(EAF_TYPE_EC_SET, T_ECLIST, EA_CODE(EAP_BGP, BA_EXT_COMMUNITY)); })
 CF_ADDTO(dynamic_attr, BGP_LARGE_COMMUNITY
-	{ $$ = f_new_dynamic_attr(EAF_TYPE_INT_SET, T_CLIST, EA_CODE(EAP_BGP, BA_LARGE_COMMUNITY)); })
+	{ $$ = f_new_dynamic_attr(EAF_TYPE_LC_SET, T_CLIST, EA_CODE(EAP_BGP, BA_LARGE_COMMUNITY)); })
 
 
 

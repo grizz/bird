@@ -6,7 +6,7 @@
  *	Can be freely distributed and used under the terms of the GNU GPL.
  */
 
-#undef LOCAL_DEBUG
+#define LOCAL_DEBUG
 
 #include <stdlib.h>
 
@@ -273,9 +273,11 @@ bgp_format_large_community(eattr *a, byte *buf, int buflen)
   for (i=0; i<sz; i+=3)
     {
     buf += bsprintf(buf, "(%d,%d,%d)", d[i], d[i+1], d[i+2]);
-    // TODO don't leave a trailing space
     *buf++ = ' ';
     }
+
+    // terminate string on trailing space
+    *--buf = 0;
 }
 
 static int
@@ -376,7 +378,7 @@ static struct attr_desc bgp_attr_table[] = {
   { .name = NULL },
   { .name = NULL },
   { .name = NULL },
-  { "large_community", -1, BAF_OPTIONAL | BAF_TRANSITIVE, EAF_TYPE_INT_SET, 1,	/* BA_LARGE_COMMUNITY */
+  { "large_community", -1, BAF_OPTIONAL | BAF_TRANSITIVE, EAF_TYPE_LC_SET, 1,	/* BA_LARGE_COMMUNITY */
     bgp_check_large_community, bgp_format_large_community }
 };
 
@@ -627,7 +629,7 @@ bgp_encode_attrs(struct bgp_proto *p, byte *w, ea_list *attrs, int remains)
       len = bgp_get_attr_len(a);
 
       /* Skip empty sets */ 
-      if (((type == EAF_TYPE_INT_SET) || (type == EAF_TYPE_EC_SET)) && (len == 0))
+      if (((type == EAF_TYPE_INT_SET) || (type == EAF_TYPE_EC_SET) || (type == EAF_TYPE_LC_SET)) && (len == 0))
 	continue; 
 
       if (remains < len + 4)
@@ -653,6 +655,7 @@ bgp_encode_attrs(struct bgp_proto *p, byte *w, ea_list *attrs, int remains)
 	    break;
 	  }
 	case EAF_TYPE_INT_SET:
+	case EAF_TYPE_LC_SET:
 	case EAF_TYPE_EC_SET:
 	  {
 	    u32 *z = int_set_get_data(a->u.ptr);
@@ -864,6 +867,8 @@ bgp_get_bucket(struct bgp_proto *p, net *n, ea_list *attrs, int originate)
       switch (d->type & EAF_TYPE_MASK)
 	{
 	case EAF_TYPE_INT_SET:
+// TODO XXX lc qsort 
+	case EAF_TYPE_LC_SET:
 	  {
 	    struct adata *z = alloca(sizeof(struct adata) + d->u.ptr->length);
 	    z->length = d->u.ptr->length;
@@ -1849,6 +1854,7 @@ bgp_decode_attrs(struct bgp_conn *conn, byte *attr, uint len, struct linpool *po
 	  ipa_ntoh(*(ip_addr *)ad->data);
 	  break;
 	case EAF_TYPE_INT_SET:
+	case EAF_TYPE_LC_SET:
 	case EAF_TYPE_EC_SET:
 	  {
 	    u32 *z = (u32 *) ad->data;

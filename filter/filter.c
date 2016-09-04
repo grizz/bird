@@ -905,6 +905,14 @@ interpret(struct f_inst *what)
 	  break;
 	}
 
+// XXX combine these
+	/* A special case: undefined int_set looks like empty int_set */
+	if ((what->aux & EAF_TYPE_MASK) == EAF_TYPE_LC_SET) {
+	  res.type = T_CLIST;
+	  res.val.ad = adata_empty(f_pool, 0);
+	  break;
+	}
+
 	/* The same special case for ec_set */
 	if ((what->aux & EAF_TYPE_MASK) == EAF_TYPE_EC_SET) {
 	  res.type = T_ECLIST;
@@ -944,6 +952,7 @@ interpret(struct f_inst *what)
 	res.val.i = !!(e->u.data & BITFIELD_MASK(what));
 	break;
       case EAF_TYPE_INT_SET:
+      case EAF_TYPE_LC_SET:
 	res.type = T_CLIST;
 	res.val.ad = e->u.ptr;
 	break;
@@ -1032,6 +1041,7 @@ interpret(struct f_inst *what)
 	}
 	break;
       case EAF_TYPE_INT_SET:
+      case EAF_TYPE_LC_SET:
 	if (v1.type != T_CLIST)
 	  runtime( "Setting clist attribute to non-clist value" );
 	l->attrs[0].u.ptr = v1.val.ad;

@@ -143,6 +143,7 @@ f_generate_empty(struct f_inst *dyn)
       e->aux = T_PATH;
       break;
     case EAF_TYPE_INT_SET:
+    case EAF_TYPE_LC_SET:
       e->aux = T_CLIST;
       break;
     case EAF_TYPE_EC_SET:

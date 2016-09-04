@@ -889,6 +889,9 @@ ea_show(struct cli *c, eattr *e)
 	case EAF_TYPE_INT_SET:
 	  ea_show_int_set(c, ad, 1, pos, buf, end);
 	  return;
+	case EAF_TYPE_LC_SET:
+	  ea_show_int_set(c, ad, 1, pos, buf, end);
+	  return;
 	case EAF_TYPE_EC_SET:
 	  ea_show_ec_set(c, ad, pos, buf, end);
 	  return;
