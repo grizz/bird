@@ -251,6 +251,12 @@ bgp_check_community(struct bgp_proto *p UNUSED, byte *a UNUSED, int len)
 }
 
 static int
+bgp_check_large_community(struct bgp_proto *p UNUSED, byte *a UNUSED, int len)
+{
+  return ((len % 12) == 0) ? 0 : WITHDRAW;
+}
+
+static int
 bgp_check_cluster_list(struct bgp_proto *p UNUSED, byte *a UNUSED, int len)
 {
   return ((len % 4) == 0) ? 0 : 5;
@@ -325,7 +331,9 @@ static struct attr_desc bgp_attr_table[] = {
   { "as4_path", -1, BAF_OPTIONAL | BAF_TRANSITIVE, EAF_TYPE_OPAQUE, 1,		/* BA_AS4_PATH */
     NULL, NULL },
   { "as4_aggregator", -1, BAF_OPTIONAL | BAF_TRANSITIVE, EAF_TYPE_OPAQUE, 1,	/* BA_AS4_PATH */
-    NULL, NULL }
+    NULL, NULL },
+  { "large_community", -1, BAF_OPTIONAL | BAF_TRANSITIVE, EAF_TYPE_INT_SET, 1,	/* BA_LARGE_COMMUNITY */
+    bgp_check_large_community, NULL }
 };
 
 /* BA_AS4_PATH is type EAF_TYPE_OPAQUE and not type EAF_TYPE_AS_PATH.

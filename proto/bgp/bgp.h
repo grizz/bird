@@ -308,6 +308,8 @@ void bgp_log_error(struct bgp_proto *p, u8 class, char *msg, unsigned code, unsi
 #define BA_EXT_COMMUNITY	0x10	/* [RFC4360] */
 #define BA_AS4_PATH             0x11    /* [RFC4893] */
 #define BA_AS4_AGGREGATOR       0x12
+#define BA_LARGE_COMMUNITY      0x29   /* [draft-heitz-idr-large-community-03] */
+
 
 /* BGP connection states */
 
