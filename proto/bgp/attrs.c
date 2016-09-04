@@ -256,6 +256,28 @@ bgp_check_large_community(struct bgp_proto *p UNUSED, byte *a UNUSED, int len)
   return ((len % 12) == 0) ? 0 : WITHDRAW;
 }
 
+static void
+bgp_format_large_community(eattr *a, byte *buf, int buflen)
+{
+  struct adata *set = a->u.ptr;
+
+  if (set->length % 12)
+    {
+    bsprintf(buf, "invalid community");
+    return;
+    }
+
+  int i;
+  int sz = set->length / 4;
+  u32 *d = (u32 *) set->data;
+  for (i=0; i<sz; i+=3)
+    {
+    buf += bsprintf(buf, "(%d,%d,%d)", d[i], d[i+1], d[i+2]);
+    // TODO don't leave a trailing space
+    *buf++ = ' ';
+    }
+}
+
 static int
 bgp_check_cluster_list(struct bgp_proto *p UNUSED, byte *a UNUSED, int len)
 {
@@ -332,8 +354,30 @@ static struct attr_desc bgp_attr_table[] = {
     NULL, NULL },
   { "as4_aggregator", -1, BAF_OPTIONAL | BAF_TRANSITIVE, EAF_TYPE_OPAQUE, 1,	/* BA_AS4_PATH */
     NULL, NULL },
+  { .name = NULL },
+  { .name = NULL },
+  { .name = NULL },
+  { .name = NULL },
+  { .name = NULL },
+  { .name = NULL },
+  { .name = NULL },
+  { .name = NULL },
+  { .name = NULL },
+  { .name = NULL },
+  { .name = NULL },
+  { .name = NULL },
+  { .name = NULL },
+  { .name = NULL },
+  { .name = NULL },
+  { .name = NULL },
+  { .name = NULL },
+  { .name = NULL },
+  { .name = NULL },
+  { .name = NULL },
+  { .name = NULL },
+  { .name = NULL },
   { "large_community", -1, BAF_OPTIONAL | BAF_TRANSITIVE, EAF_TYPE_INT_SET, 1,	/* BA_LARGE_COMMUNITY */
-    bgp_check_large_community, NULL }
+    bgp_check_large_community, bgp_format_large_community }
 };
 
 /* BA_AS4_PATH is type EAF_TYPE_OPAQUE and not type EAF_TYPE_AS_PATH.
