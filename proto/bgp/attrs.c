@@ -259,25 +259,7 @@ bgp_check_large_community(struct bgp_proto *p UNUSED, byte *a UNUSED, int len)
 static void
 bgp_format_large_community(eattr *a, byte *buf, int buflen)
 {
-  struct adata *set = a->u.ptr;
-
-  if (set->length % 12)
-    {
-    bsprintf(buf, "invalid community");
-    return;
-    }
-
-  int i;
-  int sz = set->length / 4;
-  u32 *d = (u32 *) set->data;
-  for (i=0; i<sz; i+=3)
-    {
-    buf += bsprintf(buf, "(%d,%d,%d)", d[i], d[i+1], d[i+2]);
-    *buf++ = ' ';
-    }
-
-    // terminate string on trailing space
-    *--buf = 0;
+  lc_set_format(a->u.ptr, -1, buf, buflen);
 }
 
 static int

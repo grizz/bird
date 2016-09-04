@@ -142,6 +142,41 @@ ec_set_format(struct adata *set, int from, byte *buf, uint size)
 }
 
 int
+lc_format(byte *buf, struct large_comm ec)
+{
+  return bsprintf(buf, "(%d,%d,%d)", ec.byte[0], ec.byte[1], ec.byte[2]);
+/* XXX
+  buf += bsprintf(buf, "(%d,%d,%d)", ec.byte[0], ec.byte[1], ec.byte[2]);
+  *buf = 0;
+*/
+}
+
+int
+lc_set_format(struct adata *set, int from, byte *buf, uint buflen)
+//bgp_format_large_community(eattr *a, byte *buf, int buflen)
+{
+  if (set->length % 12)
+    {
+    buf += bsprintf(buf, "invalid community size");
+    *buf = 0;
+    return;
+    }
+
+  int i;
+  int sz = set->length / 4;
+  u32 *d = (u32 *) set->data;
+  for (i=0; i<sz; i+=3)
+    {
+    buf += bsprintf(buf, "(%d,%d,%d)", d[i], d[i+1], d[i+2]);
+    *buf++ = ' ';
+    }
+
+    // terminate string on trailing space
+    *--buf = 0;
+  return 0;
+}
+
+int
 int_set_contains(struct adata *list, u32 val)
 {
   if (!list)

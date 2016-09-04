@@ -98,9 +98,27 @@ static inline u64 ec_ip4(u64 kind, u64 key, u64 val)
 static inline u64 ec_generic(u64 key, u64 val)
 { return (key << 32) | val; }
 
+/* large community */
+#define BGP_LC_BYTES 3
+typedef struct large_comm {
+  u32 byte[BGP_LC_BYTES];
+} large_comm;
+
+static inline large_comm make_large_comm(u32 as, u32 ld1, u32 ld2)
+{
+  large_comm rv;
+  rv.byte[0] = as;
+  rv.byte[1] = ld1;
+  rv.byte[2] = ld2;
+  return rv;
+}
+
+
 int int_set_format(struct adata *set, int way, int from, byte *buf, uint size);
 int ec_format(byte *buf, u64 ec);
 int ec_set_format(struct adata *set, int from, byte *buf, uint size);
+int lc_format(byte *buf, struct large_comm ec);
+int lc_set_format(struct adata *set, int from, byte *buf, uint size);
 int int_set_contains(struct adata *list, u32 val);
 int ec_set_contains(struct adata *list, u64 val);
 struct adata *int_set_add(struct linpool *pool, struct adata *list, u32 val);
